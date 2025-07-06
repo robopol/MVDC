@@ -37,6 +37,10 @@ def fit_mvdc_coeffs(order: int = 5, start: int = 5000, stop: int = 30000, step: 
         rows.append(row)
         y.append(K)
 
+    # If H is already machine-precision equal to the exact product, no corrections are needed.
+    if max(abs(yi - 1.0) for yi in y) < 1e-12:
+        return [1.0] + [0.0] * order
+
     m = order + 1
     # normal equations
     xtx = [[0.0 for _ in range(m)] for _ in range(m)]
