@@ -2,20 +2,20 @@
 
 MVDC is a universal method for fast, high-accuracy asymptotics of *positive* finite products
 
-\[
-P = \prod_{i=1}^{m} a_i, \qquad a_i>0 .
-\]
+$$
+P = \prod_{i=1}^{m} a_i,\qquad a_i>0 .
+$$
 
 Instead of classical Taylor / Stirling / Bernoulli expansions, MVDC  
-1. automatically chooses an **optimal centre** \(k\) from the first two log-moments,  
-2. returns the **main term** \(H=k^m\) and a short polynomial correction  
-   \(C_0\,(1+C_1/m+\dots+C_p/m^p)\),  
+1. automatically chooses an **optimal centre** $k$ from the first two log-moments,  
+2. returns the **main term** $H = k^m$ and a short polynomial correction  
+   $C_0\,(1 + C_1/m + \dots + C_p/m^p)$,  
 3. optionally adds a **log-cascade** layer that drives the error down to machine precision.
 
 Key features  
-* works entirely in log-domain → no overflow for \(m\gtrsim10^6\),  
+* works entirely in log-domain → no overflow for $m\gtrsim10^6$,  
 * reaches ≥ 10 extra digits compared to the same-length Stirling/Taylor series,  
-* single algorithm for factorials, Gamma/Barnes functions, \(q\)-products, Euler products, …  
+* single algorithm for factorials, Gamma/Barnes functions, $q$-products, Euler products, …  
 
 ---
 
@@ -25,9 +25,9 @@ Key features
 | ------------- | ----------- |
 | `mvdc_utils.py` | Core routine: centre selection + main term \(H\). |
 | `wallis_mvdc.py` | Wallis product: MVDC (H, H+5) vs. classical expansion. |
-| `binom_mvdc.py` | Central binomial coefficient \(\binom{2n}{n}\). |
-| `gamma_ratio_mvdc.py` | **New** example: ratio \(\Gamma(n+0.5)/\Gamma(n)\) – MVDC vs. Stirling. |
-| `rising_mvdc_example.py` | Rising factorial \(n^{\underline k}\) with \(k\approx n/2\). |
+| `binom_mvdc.py` | Central binomial coefficient $\binom{2n}{n}$. |
+| `gamma_ratio_mvdc.py` | **New** example: ratio $\Gamma(n+0.5)/\Gamma(n)$ – MVDC vs. Stirling. |
+| `rising_mvdc_example.py` | Rising factorial $n^{\underline{k}}$ with $k\approx n/2$. |
 | `qpoch_mvdc_example.py` | \(q\)-Pochhammer \((0.8,0.3)_N\). |
 | `mobius_mvdc_example.py` | Truncated Euler product \(\prod_{p\le P}(1-p^{-2})\). |
 | `docs/mvdc_publication_en.pdf` | Full English paper (arXiv style). |
