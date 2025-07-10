@@ -8,9 +8,9 @@ The expansion employed is (see e.g. OEIS A002894 asymptotic expansion)
     C(2n, n)  ~  4^n / sqrt(pi n)  *  ( 1
           - 1/(8 n)
           + 1/(128 n^2)
-          + 5/(3072 n^3)
-          - 7/(131072 n^4)
-          + 35/(3932160 n^5)  + ... ).
+          - 5/(1024 n^3)
+          + 35/(32768 n^4)
+          - 231/(262144 n^5) + ... ).
 
 We include terms up to 1/n^5 which makes the relative error O(n⁻⁶).
 A high-precision mpmath variant is provided as well.
@@ -38,9 +38,9 @@ PI = math.pi
 # exact rational coefficients up to 1/n^5
 A1 = -1/8
 A2 = 1/128
-A3 = 5/3072
-A4 = -7/131072
-A5 = 35/3932160
+A3 = -5/1024
+A4 = 35/32768
+A5 = -231/262144
 COEFFS = [0.0, A1, A2, A3, A4, A5]  # index starts at 1
 
 
@@ -129,4 +129,4 @@ def _demo() -> None:
 
 
 if __name__ == "__main__":
-    _demo() 
+    _demo()
