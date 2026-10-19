@@ -1,0 +1,434 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\geometry{margin=2.7cm}
+\hypersetup{hidelinks}
+
+\title{Moment--Centred Decomposition (MVDC):\\
+Central Bernoulli Numbers and High--Precision Euler--Product Corrections}
+\author{Ing.~Robert~Polak\\\small e--mail: robopol@gmail.com}
+\date{August 11, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The Mean--Value Decomposition by Centre (MVDC) separates a finite product
+into a chosen centre term and an exact residual.  For smooth factor
+sequences, midpoint Taylor expansion of the logarithm is governed by
+centred powers of the index.  These finite coefficients form a natural
+\(C\)--Bernoulli family and admit exact representations through central
+Bernoulli polynomials and a compact generating function.  A second,
+distinct moment expansion follows from the Taylor series of
+\(\log(1+x)\) when the factors, rather than their logarithms, are centred
+multiplicatively.  Keeping these two constructions separate removes an
+ambiguity in an earlier draft while preserving the central Bernoulli
+structure of MVDC.  The factorial application gives the usual exact
+Bernoulli coefficients around an analytic MVDC centre.  For Euler
+products the finite prime block is evaluated exactly by its logarithmic
+mean, and only the remaining infinite tail must be modelled or bounded.
+\end{abstract}
+
+\section{Exact decomposition and the role of the centre}
+
+Let
+\[
+  P_n=\prod_{i=1}^{n}a_i,\qquad a_i>0,\qquad
+  \ell_i:=\log a_i .
+\]
+For every real centre \(c\), with \(k=e^c\), define
+\[
+  H_c:=k^n=e^{nc},\qquad
+  R_c(n):=\sum_{i=1}^{n}(\ell_i-c).
+\]
+Then the fundamental MVDC identity is
+\begin{equation}\label{eq:exact-centre}
+  \boxed{\;P_n=H_c\,e^{R_c(n)},\qquad
+  \log P_n=nc+R_c(n).\;}
+\end{equation}
+No asymptotic assumption is used in \eqref{eq:exact-centre}.  The centre
+may be selected analytically so that \(H_c\) absorbs known dominant
+terms, or numerically for stability.
+
+There is one important limiting case.  If
+\[
+  c=\mu_{\log}:=\frac1n\sum_{i=1}^{n}\ell_i,
+\]
+then \(R_{\mu_{\log}}(n)=0\) and \(H_{\mu_{\log}}=P_n\) identically.
+This is a valid exact log-domain evaluation, but it leaves no nonzero
+residual to approximate.  A nontrivial asymptotic application therefore
+uses a centre specified independently of the exact finite product, for
+example by an integral, an endpoint calculation, or known leading
+asymptotics.
+
+\section{The correct factor-moment expansion}
+
+Higher moments enter through the factors themselves.  Write
+\[
+  a_i=k(1+x_i),\qquad x_i=\frac{a_i}{k}-1,
+  \qquad X_r(k):=\sum_{i=1}^{n}x_i^r .
+\]
+If \(\rho:=\max_i|x_i|<1\), summing the Taylor series for
+\(\log(1+x_i)\) gives
+\begin{equation}\label{eq:factor-moments}
+  \boxed{\;
+  \log\frac{P_n}{k^n}
+  =\sum_{r=1}^{\infty}\frac{(-1)^{r-1}}{r}\,X_r(k).\;}
+\end{equation}
+After truncation at \(r=M\), the remainder obeys the explicit bound
+\[
+  |\mathcal R_M|
+  \le
+  \sum_{i=1}^{n}
+  \frac{|x_i|^{M+1}}{(M+1)(1-|x_i|)}.
+\]
+For the arithmetic-mean centre
+\(k=\bar a=n^{-1}\sum_i a_i\), one has \(X_1(k)=0\), so the series starts
+at \(r=2\).  This is the precise setting in which the cancellation of
+the first moment follows from \(\log(1+x)\).  Logarithmic central
+moments \(\sum(\ell_i-\mu_{\log})^r\) are useful descriptors of the
+data, but they are not interchangeable with the factor moments
+\(X_r(k)\) in \eqref{eq:factor-moments}.
+
+\section{Central Bernoulli and Nörlund polynomials}
+
+Ordinary Bernoulli polynomials are defined by
+\[
+  \frac{t e^{xt}}{e^t-1}
+  =\sum_{r=0}^{\infty}B_r(x)\frac{t^r}{r!}.
+\]
+The generalized Bernoulli polynomials of order \(\alpha\), often
+associated with Nörlund, are defined by
+\begin{equation}\label{eq:norlund}
+  \left(\frac{t}{e^t-1}\right)^\alpha e^{xt}
+  =\sum_{r=0}^{\infty}B_r^{(\alpha)}(x)\frac{t^r}{r!}.
+\end{equation}
+One standard central Bernoulli family is
+\begin{equation}\label{eq:central-bernoulli}
+  B_r^c(x):=2^rB_r\!\left(\frac{x+1}{2}\right),
+  \qquad
+  \frac{t}{\sinh t}e^{xt}
+  =\sum_{r=0}^{\infty}B_r^c(x)\frac{t^r}{r!}.
+\end{equation}
+It satisfies \(B_r^c(-x)=(-1)^rB_r^c(x)\).  More generally,
+\[
+  \left(\frac{t}{\sinh t}\right)^\alpha e^{xt}
+  =\sum_{r=0}^{\infty}B_{r,\alpha}^c(x)\frac{t^r}{r!},
+  \qquad
+  B_{r,\alpha}^c(x)
+  =2^rB_r^{(\alpha)}\!\left(\frac{x+\alpha}{2}\right).
+\]
+Thus central Bernoulli objects and their Nörlund connection are
+standard; the remaining question is how they enter a particular MVDC
+expansion.
+
+\section{Finite C--Bernoulli coefficients}
+
+Put \(m_n=(n+1)/2\).  The finite centred-index coefficients used in this
+note are
+\begin{definition}[Finite \(C\)--Bernoulli coefficients]
+\begin{equation}\label{eq:C-definition}
+  \boxed{\;
+  C_r(n):=\frac1{r!}\sum_{i=1}^{n}(i-m_n)^r,\qquad r\ge0.\;}
+\end{equation}
+\end{definition}
+This definition is purely algebraic and depends only on the geometry of
+the \(n\) equally spaced indices.  Faulhaber's identity gives
+\begin{equation}\label{eq:C-bernoulli}
+  C_r(n)
+  =
+  \frac{
+    B_{r+1}\!\left(\frac{n+1}{2}\right)
+    -B_{r+1}\!\left(\frac{1-n}{2}\right)}
+  {(r+1)r!}
+  =
+  \frac{B_{r+1}^c(n)-B_{r+1}^c(-n)}
+  {2^{r+1}(r+1)r!}.
+\end{equation}
+The generating function is regular at the origin and has the compact
+form
+\begin{equation}\label{eq:C-generating}
+  \boxed{\;
+  \sum_{r=0}^{\infty}C_r(n)t^r
+  =\sum_{i=1}^{n}e^{(i-m_n)t}
+  =\frac{\sinh(nt/2)}{\sinh(t/2)}.\;}
+\end{equation}
+Symmetry now gives the correct parity:
+\[
+  C_{2j+1}(n)=0.
+\]
+The first nonzero coefficients are
+\[
+  C_0(n)=n,\qquad
+  C_2(n)=\frac{n(n^2-1)}{24},\qquad
+  C_4(n)=\frac{n(n^2-1)(3n^2-7)}{5760}.
+\]
+
+\begin{theorem}[Midpoint expansion]\label{thm:midpoint}
+Let \(f\in C^{2p+2}[1,n]\).  Then
+\begin{equation}\label{eq:midpoint}
+  \sum_{i=1}^{n}f(i)
+  =
+  \sum_{j=0}^{p}f^{(2j)}(m_n)C_{2j}(n)
+  +\mathcal T_{2p+2},
+\end{equation}
+where
+\[
+  |\mathcal T_{2p+2}|
+  \le
+  \left\|f^{(2p+2)}\right\|_{\infty}
+  C_{2p+2}(n).
+\]
+\end{theorem}
+\begin{proof}
+Apply Taylor's theorem at \(m_n\) to every \(f(i)\), sum the finite
+expansions, and use \eqref{eq:C-definition}.  All odd powers cancel by
+symmetry.  Summing the Lagrange remainder bounds gives the stated
+estimate.
+\end{proof}
+
+For \(f(i)=\log a_i\), Theorem~\ref{thm:midpoint} is the rigorous
+central Bernoulli bridge in MVDC.  The \(C_r(n)\) encode the centred
+indices, while the derivatives of the smooth interpolation \(f(x)\)
+encode the particular factors.  Consequently the same \(C_r(n)\) may
+be reused for different smooth products without identifying them with
+the data-dependent moments of the values \(f(i)\).
+
+\section{Euler--Maclaurin form and the factorial}
+
+For \(g_c(x)=f(x)-c\), the Euler--Maclaurin formula on the indices
+\(1,\ldots,n\) is
+\begin{align}
+  \sum_{i=1}^{n}g_c(i)
+  ={}&
+  \int_1^n g_c(x)\,dx
+  +\frac{g_c(1)+g_c(n)}2 \notag\\
+  &+\sum_{j=1}^{p}
+  \frac{B_{2j}}{(2j)!}
+  \left(g_c^{(2j-1)}(n)-g_c^{(2j-1)}(1)\right)
+  +\mathcal E_p . \label{eq:EM}
+\end{align}
+The standard remainder \(\mathcal E_p\) is an integral involving the
+periodic Bernoulli polynomial and \(g_c^{(2p)}\).  A centre can absorb
+some integral or boundary contributions in a specific application, but
+those cancellations must be checked for that application.
+
+For the factorial, choose the analytic centre
+\[
+  c_n=\log n-1+\frac{\log(2\pi n)}{2n},\qquad
+  H_n=e^{nc_n}=\sqrt{2\pi n}\left(\frac ne\right)^n .
+\]
+Euler--Maclaurin applied to \(f(x)=\log x\), with the limiting constant
+fixed in the standard way, yields
+\begin{equation}\label{eq:factorial}
+  \log\frac{n!}{H_n}
+  \sim
+  \sum_{j=1}^{\infty}
+  \frac{B_{2j}}{2j(2j-1)n^{2j-1}}.
+\end{equation}
+Thus
+\[
+  \log\frac{n!}{H_n}
+  =
+  \frac1{12n}-\frac1{360n^3}
+  +\frac1{1260n^5}-\frac1{1680n^7}
+  +O(n^{-9}).
+\]
+These are precisely the analytic coefficients implemented in
+\texttt{mvdc\_factorial\_analytic.py}.  For this particular centre, the
+MVDC organization and the classical log--Stirling expansion are the
+same closed formula written as \(H_n\) times a small correction; this
+observation does not compare other MVDC centres or fitted cascades with
+Stirling expansions.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rc}
+\toprule
+\(n\) & relative error after the \(n^{-7}\) term \\
+\midrule
+10  & \(8.23\times10^{-13}\) \\
+20  & \(1.63\times10^{-15}\) \\
+50  & \(4.31\times10^{-19}\) \\
+100 & \(8.42\times10^{-22}\) \\
+\bottomrule
+\end{tabular}
+\caption{High-precision check of \eqref{eq:factorial} using 80-digit arithmetic.}
+\end{table}
+
+\section{Application to truncated Euler products}
+
+Let
+\[
+  \zeta_N(s)=\prod_{p\le N}(1-p^{-s})^{-1},
+  \qquad \sigma:=\Re s>1.
+\]
+For \(M>N\), define
+\[
+  f_s(p):=-\log(1-p^{-s}),\qquad
+  \mu_{N,M}(s):=\frac1n\sum_{N<p\le M}f_s(p),
+  \qquad n=\pi(M)-\pi(N).
+\]
+The finite block is exactly
+\[
+  B_{N,M}(s):=\sum_{N<p\le M}f_s(p)=n\mu_{N,M}(s).
+\]
+Therefore the exact tail decomposition is
+\begin{equation}\label{eq:zeta-tail}
+  \log\frac{\zeta(s)}{\zeta_N(s)}
+  =n\mu_{N,M}(s)+R_M(s),
+  \qquad
+  R_M(s)=\sum_{p>M}-\log(1-p^{-s}).
+\end{equation}
+The omitted tail has the elementary rigorous bound
+\begin{equation}\label{eq:tail-bound}
+  |R_M(s)|
+  \le
+  \frac{M^{1-\sigma}}
+  {(\sigma-1)(1-2^{-\sigma})}.
+\end{equation}
+Indeed,
+\(-\log(1-p^{-\sigma})\le p^{-\sigma}/(1-2^{-\sigma})\),
+and the prime sum is bounded by the corresponding integer integral.
+
+For numerical acceleration one may model \(R_M(2)\) by
+\[
+  I_M:=\int_M^\infty\frac{x^{-2}}{\log x}\,dx.
+\]
+This is a prime-density model, not the rigorous bound
+\eqref{eq:tail-bound}.  With \(M=10N\), direct high-precision
+calculation gives:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+\(N\) & \(n\) & exact tail \(\Delta\) & \(B_{N,M}+I_M\) & error \\
+\midrule
+1000  & 1061 & \(1.26989814756\times10^{-4}\)
+              & \(1.27049267685\times10^{-4}\) & \(5.95\times10^{-8}\) \\
+5000  & 4464 & \(2.10858622405\times10^{-5}\)
+              & \(2.10884676662\times10^{-5}\) & \(2.61\times10^{-9}\) \\
+10000 & 8363 & \(9.81570113247\times10^{-6}\)
+              & \(9.81712884998\times10^{-6}\) & \(1.43\times10^{-9}\) \\
+\bottomrule
+\end{tabular}
+\caption{Exact finite MVDC block plus the integral model for the remaining zeta tail.}
+\end{table}
+
+The numerical accuracy in this table is genuine, but it comes from the
+exact finite block and the integral tail model.  In the earlier
+experiment the additional logarithmic central-moment term at \(N=1000\)
+was \(-1.56\times10^{-14}\), far below the displayed
+\(5.95\times10^{-8}\) error.  Such moments may still be studied as
+diagnostics, but they are not an additional term in
+\eqref{eq:zeta-tail}.
+
+\subsection{Extension to Dirichlet \texorpdfstring{\(L\)}{L}-functions}
+
+For a primitive Dirichlet character \(\chi\) modulo \(q\), define
+\[
+  f_{\chi,s}(p):=-\log(1-\chi(p)p^{-s}),\qquad p\nmid q.
+\]
+Using a branch of the logarithm consistent with the absolutely
+convergent Euler product, the same exact decomposition holds:
+\begin{equation}\label{eq:L-tail}
+  \log\frac{L(s,\chi)}{L_N(s,\chi)}
+  =
+  n\mu_{N,M}(\chi,s)+R_{M,\chi}(s),
+\end{equation}
+where \(n\) counts the primes \(N<p\le M\) with \(p\nmid q\).  Since
+\(|\chi(p)|\le1\), the bound \eqref{eq:tail-bound} also bounds
+\(|R_{M,\chi}(s)|\).
+
+For the nontrivial real character modulo \(3\),
+\[
+  \chi_3(n)=
+  \begin{cases}
+    1,&n\equiv1\pmod3,\\
+   -1,&n\equiv2\pmod3,\\
+    0,&3\mid n,
+  \end{cases}
+\]
+the reference value can be computed independently from
+\[
+  L(2,\chi_3)
+  =\frac1{9}
+   \left[\zeta\!\left(2,\frac13\right)
+        -\zeta\!\left(2,\frac23\right)\right].
+\]
+For \(N=10^3\) and \(M=10^6\), 60-digit arithmetic gives
+\[
+\begin{array}{lr}
+\text{exact missing tail} & -5.61728190475735\times10^{-8},\\
+\text{exact finite block }(N,M] & -5.61013233973667\times10^{-8},\\
+\text{omitted tail }p>M & -7.14956502068784\times10^{-11}.
+\end{array}
+\]
+Thus the previously observed \(10^{-10}\)-level agreement is retained,
+with its source identified correctly as the explicitly computed prime
+block rather than an added central-moment series.
+
+\section{Conclusion}
+
+The corrected analytic structure of MVDC has four distinct components:
+\par\smallskip
+\begin{itemize}
+  \item the exact centre decomposition \eqref{eq:exact-centre}, valid for
+        every positive finite product;
+  \item the convergent factor-moment expansion
+        \eqref{eq:factor-moments}, with an explicit remainder;
+  \item the finite \(C\)--Bernoulli coefficients
+        \eqref{eq:C-definition}, which encode centred index sums and
+        enter smooth midpoint expansions through
+        Theorem~\ref{thm:midpoint};
+  \item application-specific analytic or numerical models for the
+        residual, such as \eqref{eq:factorial} and
+        \eqref{eq:zeta-tail}.
+\end{itemize}
+Central Bernoulli and Nörlund polynomials therefore remain a genuine
+part of the MVDC framework.  What must not be conflated are centred
+index coefficients, moments of factor deviations, and central moments
+of logarithmic data.  Once those objects are kept separate, the valid
+factorial and Euler-product computations remain intact and their error
+sources can be stated precisely.
+
+\begin{thebibliography}{9}
+\bibitem{DLMF-EM}
+NIST Digital Library of Mathematical Functions,
+\emph{Euler--Maclaurin Formula}, Sec.~2.10(i),
+\url{https://dlmf.nist.gov/2.10}.
+
+\bibitem{DLMF-Bernoulli}
+NIST Digital Library of Mathematical Functions,
+\emph{Bernoulli and Euler Polynomials: Sums of Powers}, Sec.~24.4(iii),
+\url{https://dlmf.nist.gov/24.4}.
+
+\bibitem{DLMF-Generalized}
+NIST Digital Library of Mathematical Functions,
+\emph{Generalized Bernoulli and Nörlund Polynomials}, Sec.~24.16,
+\url{https://dlmf.nist.gov/24.16}.
+
+\bibitem{Tempesta}
+P.~Tempesta,
+\emph{On Appell sequences of polynomials of Bernoulli and Euler type},
+\emph{Journal of Mathematical Analysis and Applications}
+\textbf{341} (2008), 1295--1310.
+
+\bibitem{Norlund}
+N.~E.~Nörlund,
+\emph{Vorlesungen über Differenzenrechnung},
+Springer, Berlin, 1924.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,438 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\newtheorem{veta}{Veta}
+\newtheorem{definicia}{Definícia}
+\newtheorem{poznamka}{Poznámka}
+\geometry{margin=2.7cm}
+\hypersetup{hidelinks}
+\renewcommand{\abstractname}{Abstrakt}
+\renewcommand{\proofname}{Dôkaz}
+\renewcommand{\tablename}{Tabuľka}
+\renewcommand{\refname}{Referencie}
+
+\title{Rozklad podľa centra momentov (MVDC):\\
+Centrálne Bernoulliho čísla a vysoko presné korekcie Eulerových súčinov}
+\author{Ing.~Robert~Polák\\\small e--mail: robopol@gmail.com}
+\date{11.~augusta~2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Metóda rozkladu podľa centra momentov (MVDC) rozdeľuje konečný súčin na
+člen určený zvoleným centrom a na presné rezíduum. Pri hladkých
+postupnostiach faktorov je Taylorov rozvoj logaritmu okolo stredného
+indexu riadený centrovanými mocninami indexov. Tieto konečné koeficienty
+tvoria prirodzenú \(C\)--Bernoulliho rodinu a majú presné vyjadrenie
+pomocou centrálnych Bernoulliho polynómov aj kompaktnú generujúcu
+funkciu. Druhý, odlišný momentový rozvoj vyplýva z Taylorovho radu
+\(\log(1+x)\), keď multiplikatívne centrujeme samotné faktory, nie ich
+logaritmy. Dôsledným oddelením týchto dvoch konštrukcií odstraňujeme
+nejednoznačnosť skoršej verzie a zachovávame centrálnu Bernoulliho
+štruktúru MVDC. Aplikácia na faktoriál dáva obvyklé presné Bernoulliho
+koeficienty okolo analytického centra MVDC. Pri Eulerových súčinoch sa
+konečný prvočíselný blok vyhodnotí presne pomocou jeho logaritmického
+priemeru a modelovať alebo ohraničiť treba iba zostávajúci nekonečný
+chvost.
+\end{abstract}
+
+\section{Presný rozklad a úloha centra}
+
+Nech
+\[
+  P_n=\prod_{i=1}^{n}a_i,\qquad a_i>0,\qquad
+  \ell_i:=\log a_i .
+\]
+Pre ľubovoľné reálne centrum \(c\), kde \(k=e^c\), definujme
+\[
+  H_c:=k^n=e^{nc},\qquad
+  R_c(n):=\sum_{i=1}^{n}(\ell_i-c).
+\]
+Základnou identitou MVDC je
+\begin{equation}\label{eq:presne-centrum}
+  \boxed{\;P_n=H_c\,e^{R_c(n)},\qquad
+  \log P_n=nc+R_c(n).\;}
+\end{equation}
+V \eqref{eq:presne-centrum} sa nepoužíva nijaký asymptotický predpoklad.
+Centrum možno zvoliť analyticky tak, aby \(H_c\) absorbovalo známe
+dominantné členy, alebo numericky kvôli stabilite.
+
+Existuje jeden dôležitý hraničný prípad. Ak
+\[
+  c=\mu_{\log}:=\frac1n\sum_{i=1}^{n}\ell_i,
+\]
+potom \(R_{\mu_{\log}}(n)=0\) a \(H_{\mu_{\log}}=P_n\) identicky.
+Ide o platné presné vyhodnotenie v logaritmickej oblasti, ale nezostáva
+pri ňom žiadne nenulové rezíduum na aproximáciu. Netriviálna asymptotická
+aplikácia preto používa centrum určené nezávisle od presnej hodnoty
+konečného súčinu, napríklad integrálom, výpočtom na krajoch intervalu
+alebo známou vedúcou asymptotikou.
+
+\section{Korektný rozvoj pomocou faktorových momentov}
+
+Vyššie momenty vstupujú cez samotné faktory. Píšme
+\[
+  a_i=k(1+x_i),\qquad x_i=\frac{a_i}{k}-1,
+  \qquad X_r(k):=\sum_{i=1}^{n}x_i^r .
+\]
+Ak \(\rho:=\max_i|x_i|<1\), sčítaním Taylorových radov pre
+\(\log(1+x_i)\) dostaneme
+\begin{equation}\label{eq:faktorove-momenty}
+  \boxed{\;
+  \log\frac{P_n}{k^n}
+  =\sum_{r=1}^{\infty}\frac{(-1)^{r-1}}{r}\,X_r(k).\;}
+\end{equation}
+Po odrezaní pri \(r=M\) platí explicitný odhad zvyšku
+\[
+  |\mathcal R_M|
+  \le
+  \sum_{i=1}^{n}
+  \frac{|x_i|^{M+1}}{(M+1)(1-|x_i|)}.
+\]
+Pre centrum dané aritmetickým priemerom
+\(k=\bar a=n^{-1}\sum_i a_i\) platí \(X_1(k)=0\), takže rad začína pri
+\(r=2\). Toto je presný prípad, v ktorom zrušenie prvého momentu
+vyplýva z radu \(\log(1+x)\). Centrálne logaritmické momenty
+\(\sum(\ell_i-\mu_{\log})^r\) sú užitočnými charakteristikami dát,
+nesmú sa však zamieňať s faktorovými momentmi \(X_r(k)\) v
+\eqref{eq:faktorove-momenty}.
+
+\section{Centrálne Bernoulliho a Nörlundove polynómy}
+
+Obyčajné Bernoulliho polynómy sú definované vzťahom
+\[
+  \frac{t e^{xt}}{e^t-1}
+  =\sum_{r=0}^{\infty}B_r(x)\frac{t^r}{r!}.
+\]
+Generalizované Bernoulliho polynómy rádu \(\alpha\), spájané s
+Nörlundom, sú definované vzťahom
+\begin{equation}\label{eq:norlund-sk}
+  \left(\frac{t}{e^t-1}\right)^\alpha e^{xt}
+  =\sum_{r=0}^{\infty}B_r^{(\alpha)}(x)\frac{t^r}{r!}.
+\end{equation}
+Jedna zo štandardných centrálnych Bernoulliho rodín je
+\begin{equation}\label{eq:centralne-bernoulli-sk}
+  B_r^c(x):=2^rB_r\!\left(\frac{x+1}{2}\right),
+  \qquad
+  \frac{t}{\sinh t}e^{xt}
+  =\sum_{r=0}^{\infty}B_r^c(x)\frac{t^r}{r!}.
+\end{equation}
+Platí \(B_r^c(-x)=(-1)^rB_r^c(x)\). Všeobecnejšie,
+\[
+  \left(\frac{t}{\sinh t}\right)^\alpha e^{xt}
+  =\sum_{r=0}^{\infty}B_{r,\alpha}^c(x)\frac{t^r}{r!},
+  \qquad
+  B_{r,\alpha}^c(x)
+  =2^rB_r^{(\alpha)}\!\left(\frac{x+\alpha}{2}\right).
+\]
+Centrálne Bernoulliho objekty a ich vzťah k Nörlundovým polynómom sú
+teda štandardné; zostáva presne určiť, ako vstupujú do konkrétneho
+rozvoja MVDC.
+
+\section{Konečné C--Bernoulliho koeficienty}
+
+Položme \(m_n=(n+1)/2\). Konečné koeficienty centrovaných indexov
+použité v tejto práci definujeme takto.
+\begin{definicia}
+\begin{equation}\label{eq:C-definicia-sk}
+  \boxed{\;
+  C_r(n):=\frac1{r!}\sum_{i=1}^{n}(i-m_n)^r,\qquad r\ge0.\;}
+\end{equation}
+\end{definicia}
+Definícia je čisto algebraická a závisí iba od geometrie \(n\)
+rovnomerne vzdialených indexov. Faulhaberova identita dáva
+\begin{equation}\label{eq:C-bernoulli-sk}
+  C_r(n)
+  =
+  \frac{
+    B_{r+1}\!\left(\frac{n+1}{2}\right)
+    -B_{r+1}\!\left(\frac{1-n}{2}\right)}
+  {(r+1)r!}
+  =
+  \frac{B_{r+1}^c(n)-B_{r+1}^c(-n)}
+  {2^{r+1}(r+1)r!}.
+\end{equation}
+Generujúca funkcia je regulárna v počiatku a má kompaktný tvar
+\begin{equation}\label{eq:C-generujuca-sk}
+  \boxed{\;
+  \sum_{r=0}^{\infty}C_r(n)t^r
+  =\sum_{i=1}^{n}e^{(i-m_n)t}
+  =\frac{\sinh(nt/2)}{\sinh(t/2)}.\;}
+\end{equation}
+Zo symetrie teraz vyplýva správna parita:
+\[
+  C_{2j+1}(n)=0.
+\]
+Prvé nenulové koeficienty sú
+\[
+  C_0(n)=n,\qquad
+  C_2(n)=\frac{n(n^2-1)}{24},\qquad
+  C_4(n)=\frac{n(n^2-1)(3n^2-7)}{5760}.
+\]
+
+\begin{veta}\label{veta:stredovy-rozvoj}
+Nech \(f\in C^{2p+2}[1,n]\). Potom
+\begin{equation}\label{eq:stredovy-rozvoj}
+  \sum_{i=1}^{n}f(i)
+  =
+  \sum_{j=0}^{p}f^{(2j)}(m_n)C_{2j}(n)
+  +\mathcal T_{2p+2},
+\end{equation}
+kde
+\[
+  |\mathcal T_{2p+2}|
+  \le
+  \left\|f^{(2p+2)}\right\|_{\infty}
+  C_{2p+2}(n).
+\]
+\end{veta}
+\begin{proof}
+Na každé \(f(i)\) použijeme Taylorovu vetu v bode \(m_n\), konečné
+rozvoje sčítame a použijeme \eqref{eq:C-definicia-sk}. Všetky nepárne
+mocniny sa vďaka symetrii zrušia. Sčítaním Lagrangeových odhadov zvyšku
+dostaneme uvedenú nerovnosť.
+\end{proof}
+
+Pre \(f(i)=\log a_i\) je Veta~\ref{veta:stredovy-rozvoj} rigoróznym
+centrálnym Bernoulliho mostom v MVDC. Koeficienty \(C_r(n)\) kódujú
+centrované indexy, zatiaľ čo derivácie hladkej interpolácie \(f(x)\)
+kódujú konkrétne faktory. Tie isté \(C_r(n)\) preto možno použiť pre
+rôzne hladké súčiny bez toho, aby sme ich stotožnili s momentmi hodnôt
+\(f(i)\), ktoré závisia od dát.
+
+\section{Eulerov--Maclaurinov tvar a faktoriál}
+
+Pre \(g_c(x)=f(x)-c\) má Eulerova--Maclaurinova formula na indexoch
+\(1,\ldots,n\) tvar
+\begin{align}
+  \sum_{i=1}^{n}g_c(i)
+  ={}&
+  \int_1^n g_c(x)\,dx
+  +\frac{g_c(1)+g_c(n)}2 \notag\\
+  &+\sum_{j=1}^{p}
+  \frac{B_{2j}}{(2j)!}
+  \left(g_c^{(2j-1)}(n)-g_c^{(2j-1)}(1)\right)
+  +\mathcal E_p . \label{eq:EM-sk}
+\end{align}
+Štandardný zvyšok \(\mathcal E_p\) je integrál obsahujúci periodický
+Bernoulliho polynóm a \(g_c^{(2p)}\). Centrum môže v konkrétnej aplikácii
+absorbovať časť integrálnych alebo okrajových príspevkov, ale tieto
+zrušenia treba pre danú aplikáciu osobitne overiť.
+
+Pre faktoriál zvoľme analytické centrum
+\[
+  c_n=\log n-1+\frac{\log(2\pi n)}{2n},\qquad
+  H_n=e^{nc_n}=\sqrt{2\pi n}\left(\frac ne\right)^n .
+\]
+Eulerova--Maclaurinova formula aplikovaná na \(f(x)=\log x\), so
+štandardným určením limitnej konštanty, dáva
+\begin{equation}\label{eq:faktorial-sk}
+  \log\frac{n!}{H_n}
+  \sim
+  \sum_{j=1}^{\infty}
+  \frac{B_{2j}}{2j(2j-1)n^{2j-1}}.
+\end{equation}
+Teda
+\[
+  \log\frac{n!}{H_n}
+  =
+  \frac1{12n}-\frac1{360n^3}
+  +\frac1{1260n^5}-\frac1{1680n^7}
+  +O(n^{-9}).
+\]
+Sú to presne analytické koeficienty implementované v súbore
+\texttt{mvdc\_factorial\_analytic.py}. Pre toto konkrétne centrum sú
+usporiadanie MVDC a klasický logaritmický Stirlingov rozvoj tou istou
+uzavretou formulou zapísanou ako \(H_n\) krát malá korekcia. Toto
+pozorovanie neporovnáva iné centrá MVDC ani fitované kaskády so
+Stirlingovými rozvojmi.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rc}
+\toprule
+\(n\) & relatívna chyba po člene \(n^{-7}\) \\
+\midrule
+10  & \(8.23\times10^{-13}\) \\
+20  & \(1.63\times10^{-15}\) \\
+50  & \(4.31\times10^{-19}\) \\
+100 & \(8.42\times10^{-22}\) \\
+\bottomrule
+\end{tabular}
+\caption{Vysoko presná kontrola \eqref{eq:faktorial-sk} s 80-cifernou aritmetikou.}
+\end{table}
+
+\section{Aplikácia na orezané Eulerove súčiny}
+
+Nech
+\[
+  \zeta_N(s)=\prod_{p\le N}(1-p^{-s})^{-1},
+  \qquad \sigma:=\Re s>1.
+\]
+Pre \(M>N\) definujme
+\[
+  f_s(p):=-\log(1-p^{-s}),\qquad
+  \mu_{N,M}(s):=\frac1n\sum_{N<p\le M}f_s(p),
+  \qquad n=\pi(M)-\pi(N).
+\]
+Konečný blok je presne
+\[
+  B_{N,M}(s):=\sum_{N<p\le M}f_s(p)=n\mu_{N,M}(s).
+\]
+Presný rozklad chvosta je preto
+\begin{equation}\label{eq:zeta-chvost-sk}
+  \log\frac{\zeta(s)}{\zeta_N(s)}
+  =n\mu_{N,M}(s)+R_M(s),
+  \qquad
+  R_M(s)=\sum_{p>M}-\log(1-p^{-s}).
+\end{equation}
+Pre vynechaný chvost platí elementárny rigorózny odhad
+\begin{equation}\label{eq:odhad-chvosta-sk}
+  |R_M(s)|
+  \le
+  \frac{M^{1-\sigma}}
+  {(\sigma-1)(1-2^{-\sigma})}.
+\end{equation}
+Skutočne,
+\(-\log(1-p^{-\sigma})\le p^{-\sigma}/(1-2^{-\sigma})\)
+a súčet cez prvočísla zhora ohraničíme zodpovedajúcim integrálom cez
+celé čísla.
+
+Na numerické zrýchlenie možno \(R_M(2)\) modelovať integrálom
+\[
+  I_M:=\int_M^\infty\frac{x^{-2}}{\log x}\,dx.
+\]
+Ide o model hustoty prvočísiel, nie o rigorózny odhad
+\eqref{eq:odhad-chvosta-sk}. Pre \(M=10N\) dáva priamy vysoko presný
+výpočet:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+\(N\) & \(n\) & presný chvost \(\Delta\) & \(B_{N,M}+I_M\) & chyba \\
+\midrule
+1000  & 1061 & \(1.26989814756\times10^{-4}\)
+              & \(1.27049267685\times10^{-4}\) & \(5.95\times10^{-8}\) \\
+5000  & 4464 & \(2.10858622405\times10^{-5}\)
+              & \(2.10884676662\times10^{-5}\) & \(2.61\times10^{-9}\) \\
+10000 & 8363 & \(9.81570113247\times10^{-6}\)
+              & \(9.81712884998\times10^{-6}\) & \(1.43\times10^{-9}\) \\
+\bottomrule
+\end{tabular}
+\caption{Presný konečný blok MVDC plus integrálny model zostávajúceho zeta chvosta.}
+\end{table}
+
+Numerická presnosť v tabuľke je skutočná, ale pochádza z presného
+konečného bloku a z integrálneho modelu chvosta. V skoršom experimente
+mal dodatočný člen z centrálnych logaritmických momentov pri \(N=1000\)
+hodnotu \(-1.56\times10^{-14}\), čo je hlboko pod zobrazenou chybou
+\(5.95\times10^{-8}\). Takéto momenty možno naďalej skúmať ako
+diagnostické veličiny, nie však ako dodatočný člen v
+\eqref{eq:zeta-chvost-sk}.
+
+\subsection{Rozšírenie na Dirichletove \texorpdfstring{\(L\)}{L}-funkcie}
+
+Pre primitívny Dirichletov charakter \(\chi\) modulo \(q\) definujme
+\[
+  f_{\chi,s}(p):=-\log(1-\chi(p)p^{-s}),\qquad p\nmid q.
+\]
+Pri vetve logaritmu zhodnej s absolútne konvergentným Eulerovým súčinom
+platí ten istý presný rozklad:
+\begin{equation}\label{eq:L-chvost-sk}
+  \log\frac{L(s,\chi)}{L_N(s,\chi)}
+  =
+  n\mu_{N,M}(\chi,s)+R_{M,\chi}(s),
+\end{equation}
+kde \(n\) počíta prvočísla \(N<p\le M\) s \(p\nmid q\). Keďže
+\(|\chi(p)|\le1\), odhad \eqref{eq:odhad-chvosta-sk} ohraničuje aj
+\(|R_{M,\chi}(s)|\).
+
+Pre netriviálny reálny charakter modulo \(3\),
+\[
+  \chi_3(n)=
+  \begin{cases}
+    1,&n\equiv1\pmod3,\\
+   -1,&n\equiv2\pmod3,\\
+    0,&3\mid n,
+  \end{cases}
+\]
+možno referenčnú hodnotu nezávisle vypočítať zo vzťahu
+\[
+  L(2,\chi_3)
+  =\frac1{9}
+   \left[\zeta\!\left(2,\frac13\right)
+        -\zeta\!\left(2,\frac23\right)\right].
+\]
+Pre \(N=10^3\) a \(M=10^6\) dáva 60-ciferná aritmetika
+\[
+\begin{array}{lr}
+\text{presný chýbajúci chvost} & -5.61728190475735\times10^{-8},\\
+\text{presný konečný blok }(N,M] & -5.61013233973667\times10^{-8},\\
+\text{vynechaný chvost }p>M & -7.14956502068784\times10^{-11}.
+\end{array}
+\]
+Predtým pozorovaná zhoda na úrovni \(10^{-10}\) teda zostáva zachovaná,
+pričom jej zdrojom je správne identifikovaný explicitne vypočítaný
+prvočíselný blok, nie pridaný rad centrálnych momentov.
+
+\section{Záver}
+
+Opravená analytická štruktúra MVDC má štyri odlišné časti:
+\par\smallskip
+\begin{itemize}
+  \item presný rozklad podľa centra \eqref{eq:presne-centrum}, platný pre
+        každý kladný konečný súčin;
+  \item konvergentný rozvoj pomocou faktorových momentov
+        \eqref{eq:faktorove-momenty} s explicitným zvyškom;
+  \item konečné \(C\)--Bernoulliho koeficienty
+        \eqref{eq:C-definicia-sk}, ktoré kódujú centrované súčty indexov
+        a vstupujú do hladkých stredových rozvojov cez
+        Vetu~\ref{veta:stredovy-rozvoj};
+  \item analytické alebo numerické modely rezídua špecifické pre danú
+        aplikáciu, napríklad \eqref{eq:faktorial-sk} a
+        \eqref{eq:zeta-chvost-sk}.
+\end{itemize}
+Centrálne Bernoulliho a Nörlundove polynómy tak zostávajú skutočnou
+súčasťou rámca MVDC. Nemožno však zamieňať koeficienty centrovaných
+indexov, momenty odchýlok faktorov a centrálne momenty logaritmických
+dát. Po ich dôslednom oddelení zostávajú platné faktoriálové aj
+Eulerovské výpočty zachované a zdroje ich chýb možno uviesť presne.
+
+\begin{thebibliography}{9}
+\bibitem{DLMF-EM-sk}
+NIST Digital Library of Mathematical Functions,
+\emph{Euler--Maclaurin Formula}, Sec.~2.10(i),
+\url{https://dlmf.nist.gov/2.10}.
+
+\bibitem{DLMF-Bernoulli-sk}
+NIST Digital Library of Mathematical Functions,
+\emph{Bernoulli and Euler Polynomials: Sums of Powers}, Sec.~24.4(iii),
+\url{https://dlmf.nist.gov/24.4}.
+
+\bibitem{DLMF-Generalized-sk}
+NIST Digital Library of Mathematical Functions,
+\emph{Generalized Bernoulli and Nörlund Polynomials}, Sec.~24.16,
+\url{https://dlmf.nist.gov/24.16}.
+
+\bibitem{Tempesta-sk}
+P.~Tempesta,
+\emph{On Appell sequences of polynomials of Bernoulli and Euler type},
+\emph{Journal of Mathematical Analysis and Applications}
+\textbf{341} (2008), 1295--1310.
+
+\bibitem{Norlund-sk}
+N.~E.~Nörlund,
+\emph{Vorlesungen über Differenzenrechnung},
+Springer, Berlin, 1924.
+\end{thebibliography}
+
+\end{document}

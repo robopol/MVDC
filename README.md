@@ -136,18 +136,29 @@ corrected paper's formulas and tables. Reports record precision, training
 points, runtime-library versions and source hashes. `-B` avoids generating
 bytecode caches during these runs.
 
-## Publications and historical files
+## Corrected publications
 
-The corrected companion paper is published at
-[Zenodo 21898952](https://zenodo.org/records/21898952). Use this versioned
-record for the corrected separation of centre identities, factor moments and
-finite index coefficients. PDF files retained in the repository are publication
-snapshots; this code update does not revise them.
+The current mathematical papers are dated **11 August 2026**:
 
-The older `mvdc_publication_en.pdf`, `mvdc_publication_sk.pdf` preserve
-historical material. Their old centre-optimality
-and precision-comparison claims should not be treated as validation of the
-repaired implementations. This code repair does not rewrite those papers.
+- [English PDF](c_bernoulli_derivation.pdf) and
+  [LaTeX source](c_bernoulli_derivation.tex).
+- [Slovak PDF](c_bernoulli_derivation_sk.pdf) and
+  [LaTeX source](c_bernoulli_derivation_sk.tex).
+
+The English PDF is byte-identical to the corrected paper published on
+12 August 2026 in [Zenodo record 21898952](https://zenodo.org/records/21898952).
+Both PDFs distinguish exact centre identities, factor moments, finite centred
+index coefficients, and the modelled or bounded infinite tails.
+
+The **19 October 2026 numerical update** is supplied separately in
+[the accuracy report](reports/mvdc-validation-2026-10-19.json) and
+[the research article](https://robopol.sk/research/mvdc-method.html).
+The August PDFs do not contain these later fitted-centre measurements.
+
+The superseded 2025 general papers (`mvdc_publication_en.pdf` and
+`mvdc_publication_sk.pdf`) have been removed from the current branch because
+their centre-optimality and accuracy claims were incorrect or unsupported.
+Earlier versions remain recoverable in Git history.
 
 References for the classical components:
 
