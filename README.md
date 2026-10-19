@@ -1,170 +1,158 @@
-# MVDC – Mean Value Decomposition by Centre
+# MVDC: centre decomposition and numerical experiments
 
-MVDC is a universal method for fast, high-accuracy asymptotics of *positive* finite products
+This repository studies finite-product centring, residual expansions and
+numerical approximation. The repaired Python examples distinguish three tasks:
 
-$$
-P = \prod_{i=1}^{m} a_i,\qquad a_i>0 .
-$$
+1. **Exact finite-product evaluation.** The geometric log centre computes the
+   full log product. Its residual is zero; a polynomial fit of roundoff is not
+   a new asymptotic correction.
+2. **Fitted analytic centres.** Gamma ratios, central binomial coefficients,
+   Wallis products, factorials and rising factorials use explicit main terms.
+   Genuine log residuals are fitted in scaled inverse powers using 80-digit
+   Householder QR. Each fit records its training interval and error. Predictions
+   outside the interval are reported as extrapolation.
+3. **Tail models.** Euler and Dirichlet experiments separate an exact finite
+   prime block, an optional tail approximation and a rigorous absolute bound.
 
-Instead of classical Taylor / Stirling / Bernoulli expansions, MVDC  
-1. automatically chooses an **optimal centre** $k$ from the first two log-moments,  
-2. returns the **main term** $H = k^m$ and a short polynomial correction  
-   $C_0\,(1 + C_1/m + \dots + C_p/m^p)$,  
-3. optionally adds a **log-cascade** layer that drives the error down to machine precision.
+The generic log centre is the geometric mean; the former variance shifts did
+not follow from moment minimization. For a convergent factor-moment expansion,
+`factor_center(..., criterion="minimax")` minimizes the maximum relative factor
+deviation. The expansion requires `max(abs(a_i/k - 1)) < 1` and returns an
+explicit truncation bound.
 
-Key features  
-* works entirely in log-domain → no overflow for $m\gtrsim10^6$,  
-* reaches ≥ 10 extra digits compared to the same-length Stirling/Taylor series,  
-* single algorithm for factorials, Gamma/Barnes functions, $q$-products, Euler products, …  
+## Install
 
----
+Python 3.10 or newer is required.
 
-## Folder structure
-
-| File / folder | Description |
-| ------------- | ----------- |
-| **Core Library** | |
-| `mvdc_utils.py` | Core routine: centre selection + main term \(H\). |
-| **Basic Examples** | |
-| `wallis_mvdc.py` | Wallis product: MVDC (H, H+5) vs. classical expansion. |
-| `binom_mvdc.py` | Central binomial coefficient $\binom{2n}{n}$. |
-| `binom_analytic.py` | Analytic binomial coefficient approximation. |
-| `gamma_ratio_mvdc.py` | Ratio $\Gamma(n+0.5)/\Gamma(n)$ – MVDC vs. Stirling. |
-| `rising_mvdc_example.py` | Rising factorial $n^{\underline{k}}$ with $k\approx n/2$. |
-| `qpoch_mvdc_example.py` | \(q\)-Pochhammer \((0.8,0.3)_N\). |
-| `mobius_mvdc_example.py` | Truncated Euler product \(\prod_{p\le P}(1-p^{-2})\). |
-| **Advanced Examples** | |
-| `mvdc_factorial_analytic.py` | **New**: Fully analytic factorial approximation using Bernoulli numbers. |
-| `faktorial.py` | Factorial computations and comparisons. |
-| **Experiments** | |
-| `experiments/mvdc_dirichlet_tail.py` | **New**: Dirichlet L-functions and character analysis. |
-| `experiments/mvdc_euler_product.py` | **New**: Advanced Euler product convergence studies. |
-| `experiments/mvdc_d_finiteness_test.py` | **New**: D-finiteness testing for sequences. |
-| `experiments/pi_mvdc_gui.py` | **New**: Interactive GUI for π(x) prime counting approximations. |
-| **Documentation** | |
-| `mvdc_publication_en.pdf` | Full English paper (arXiv style). |
-| `mvdc_publication_sk.pdf` | Slovak version of the paper. |
-| `c_bernoulli_derivation.pdf` | **New**: Bernoulli derivation theory (English). |
-| `c_bernoulli_derivation_sk.pdf` | **New**: Bernoulli derivation theory (Slovak). |
-
----
-
-## Quick install
-
-```bash
-git clone https://github.com/robopol/MVDC.git
-cd MVDC
-python -m venv venv
-# Linux/macOS
-source venv/bin/activate
-# Windows
-# .\venv\Scripts\activate
-pip install sympy mpmath
+```sh
+python -m pip install -r requirements.txt
 ```
 
-**Additional dependencies for GUI experiments:**
-```bash
-pip install tkinter  # Usually included with Python
+Only `mpmath` is required for the numerical examples. The standard-library
+`tkinter` module is needed only to open the optional GUI. On Windows it is
+normally supplied by the Python installer; it is not installed with pip.
+
+## Numerical examples
+
+```sh
+python -X utf8 -B gamma_ratio_mvdc.py
+python -X utf8 -B binom_analytic.py
+python -X utf8 -B binom_mvdc.py
+python -X utf8 -B wallis_mvdc.py
+python -X utf8 -B mvdc_factorial_analytic.py
+python -X utf8 -B faktorial.py
+python -X utf8 -B rising_mvdc_example.py
+python -X utf8 -B qpoch_mvdc_example.py
+python -X utf8 -B mobius_mvdc_example.py
 ```
 
----
+The Gamma example retains the original nine training points
+`200, 400, ..., 1800`. The six original evaluation points remain visible, and
+additional points are held out of training. `n=1000` is explicitly marked as a
+training point. The report separates:
 
-## Run the examples
+- the normalized full product, whose correction is exactly `sqrt(pi)`;
+- the fast fitted log centre, evaluated without the full product;
+- correct multiplicative Stirling expansions through `1/n^2` and `1/n^5`;
+- the classical log expansion through `1/n^5`;
+- high-precision evaluation and native binary64 evaluation.
 
-### Basic Examples
-```bash
-python wallis_mvdc.py
-python binom_mvdc.py
-python gamma_ratio_mvdc.py
-python mvdc_factorial_analytic.py
+The polynomial fit includes its intercept. Orders 3 and 5 are fitted
+independently. A cascade fits the second layer to the first layer's actual
+remaining residual; its higher degree is stated explicitly. None of these
+finite measurements establishes universal or equal-cost superiority.
+
+`binom_analytic.py` generates exact rational coefficients from the log series.
+`mvdc_factorial_analytic.py` uses classical Bernoulli log corrections. Its
+public Ramanujan function and its demo use the same sixth-root formula.
+Binary64 APIs return `inf` on overflow; high-precision and log APIs remain
+available for large products. Negative indices and unsupported orders raise
+errors instead of silently returning a plausible value.
+
+The q-Pochhammer example uses its natural `q**N` coordinate and a convergent
+analytic residual series with a bound, rather than fitting a near-zero
+residual to `1/N`. The finite inverse-zeta example performs full finite-product
+evaluation with zero log residual; it does not claim to approximate the
+uncomputed infinite tail.
+
+## Euler products and corrected diagnostics
+
+```sh
+python -X utf8 -B experiments/mvdc_euler_product.py
+python -X utf8 -B experiments/mvdc_dirichlet_tail.py
+python -X utf8 -B experiments/gamma_mvdc_attempt.py
+python -X utf8 -B experiments/mvdc_d_finiteness_test.py
 ```
 
-### Interactive Experiments
-```bash
-# Launch GUI for prime counting function approximations
-python experiments/pi_mvdc_gui.py
+The repository-root `mvdc_euler_product.py` and `mvdc_dirichlet_tail.py`
+entry points delegate to the corrected implementations in `experiments/`.
 
-# Advanced mathematical experiments
-python experiments/mvdc_dirichlet_tail.py
-python experiments/mvdc_euler_product.py
+- Euler-product estimates use the exact finite block plus a prime-density
+  integral. The integral is a model; the absolute tail bound is separate.
+- Dirichlet `L(s, chi_3)` is evaluated through a Hurwitz-zeta identity. Finite
+  character sums have a separately named function. No unchecked `1e-10`
+  remainder guarantee is used.
+- Historical central-log-moment expressions may be printed as diagnostics,
+  but they are never added to an already exact finite logarithmic block.
+- The Euler-constant experiment now uses the convergent series
+  `sum(1/k - log(1+1/k))` and a standard Euler-Maclaurin acceleration. Its
+  factorial-scaled coefficients are real numbers, not exact rationals.
+- The D-finiteness script proves an exact recurrence for each fixed finite
+  centred-index set. It makes no inference about an infinite prime sequence.
+
+## Prime-counting research utility
+
+```sh
+python -X utf8 -B pi_mvdc_gui.py
+python -X utf8 -B pi_mvdc_gui.py --x 100000 --cutoff 10000 --verify
+python -X utf8 -B experiments/test_mvdc_range.py
 ```
 
-Each script prints a table:
+Importing the GUI never opens a window. The former Bernoulli-denominator
+conversion and artificial log-moment correction had no established prime-count
+error bound. They have been replaced in this utility by an explicit exact-front
+plus Riemann-R (or logarithmic-integral) tail model. This is a declared reference
+model, not a claimed new MVDC theorem. The effort target selects a bounded exact
+cutoff; it does not guarantee a relative error for the modelled tail.
 
-* **Exact** – reference value (`math` / high precision),
-* **Stirling / Taylor** – classical expansion,
-* **MVDC H, H+5** – main term + polynomial cascade,
-* relative error.
+The built-in exact sieve is capped at five million. The GUI and CLI reject
+inputs outside the documented range, and an exact-reference comparison is
+optional. `experiments/pi_mvdc_gui.py` delegates to the same backend and GUI.
 
----
+## Verification and reproducible data
 
-## New Features
-
-### 🆕 Analytic Factorial Approximation
-The `mvdc_factorial_analytic.py` module provides a fully analytic MVDC approximation for factorials using exact Bernoulli number coefficients - no numeric fitting required!
-
-### 🆕 Advanced Experiments
-- **Dirichlet L-functions**: Analyze character modulo operations and convergence
-- **Euler Products**: Advanced convergence studies for infinite products  
-- **Prime Counting GUI**: Interactive tool for π(x) approximations with real-time visualization
-- **D-finiteness Testing**: Sequence analysis for mathematical properties
-
-### 🆕 Extended Documentation
-- Additional Bernoulli derivation papers in both English and Slovak
-- Enhanced theoretical background and mathematical proofs
-
----
-
-## Using MVDC for *your* product
-
-```python
-from mvdc_utils import mvdc_generic_center
-# build your list of positive factors
-factors = [...]
-_, ln_H = mvdc_generic_center(factors, order=2)   # main term (log)
-# optional: fit C0..Cp once on a training range
+```sh
+python -X utf8 -B -m unittest discover -s tests -v
+python -X utf8 -B experiments/verify_c_bernoulli_derivation.py
+python -X utf8 -B experiments/verify_euler_tail_corrections.py
+python -X utf8 -B experiments/smoke_scripts.py
+python -X utf8 -B experiments/compare_accuracy.py --output-json reports/mvdc-validation-2026-10-19.json
 ```
 
-Full pseudocode and fitting details are given in the PDF papers (Section *Algorithm + Cascade*).
+Regression checks use exact integer or rational identities, independent
+high-precision references, held-out points, domain checks and import-safety
+checks. The two earlier verification scripts remain independent checks of the
+corrected paper's formulas and tables. Reports record precision, training
+points, runtime-library versions and source hashes. `-B` avoids generating
+bytecode caches during these runs.
 
----
+## Publications and historical files
 
-## Examples by Application Domain
+The corrected companion paper is published at
+[Zenodo 21898952](https://zenodo.org/records/21898952). Use this versioned
+record for the corrected separation of centre identities, factor moments and
+finite index coefficients. PDF files retained in the repository are publication
+snapshots; this code update does not revise them.
 
-| Domain | Files | Description |
-|--------|-------|-------------|
-| **Combinatorics** | `binom_*.py` | Binomial coefficients, analytic and numeric |
-| **Number Theory** | `experiments/mvdc_euler_product.py`<br>`experiments/mvdc_dirichlet_tail.py` | Prime products, L-functions |
-| **Special Functions** | `gamma_ratio_mvdc.py`<br>`mvdc_factorial_analytic.py` | Gamma functions, factorials |
-| **q-Analogs** | `qpoch_mvdc_example.py` | q-Pochhammer symbols |
-| **Interactive Tools** | `experiments/pi_mvdc_gui.py` | GUI applications |
+The older `mvdc_publication_en.pdf`, `mvdc_publication_sk.pdf` preserve
+historical material. Their old centre-optimality
+and precision-comparison claims should not be treated as validation of the
+repaired implementations. This code repair does not rewrite those papers.
 
----
+References for the classical components:
 
-## Performance Notes
+- [NIST DLMF: Gamma asymptotic expansions](https://dlmf.nist.gov/5.11)
+- [NIST DLMF: sums of powers](https://dlmf.nist.gov/24.4)
+- [NIST DLMF: generalized Bernoulli polynomials](https://dlmf.nist.gov/24.16)
 
-- Works efficiently for products with $m \gtrsim 10^6$ terms
-- Memory usage scales linearly with number of factors
-- GPU acceleration possible for large-scale applications (future work)
-
----
-
-## License
-
-MIT License © 2025 Ing. Robert Polak
-
----
-
-## Citation
-
-If you use MVDC in your research, please cite:
-
-```bibtex
-@article{polak2025mvdc,
-  title={MVDC: Mean Value Decomposition by Centre for High-Accuracy Asymptotics},
-  author={Polak, Robert},
-  year={2025},
-  journal={arXiv preprint},
-  note={Available at: https://github.com/robopol/MVDC}
-}
-```
+MIT License, copyright 2025 Ing. Robert Polak.

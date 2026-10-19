@@ -1,72 +1,67 @@
-import math, sys
-from mvdc_utils import mvdc_generic_center
+"""Rising factorial: analytic Gamma centre and stable residual fitting."""
+from fractions import Fraction
+from functools import lru_cache
+import mpmath as mp
+from mvdc_utils import (DEFAULT_DPS, finite_float, fit_log_center, integer,
+                        number, order_value, precision, relative_error)
 
-a = 1/3  # parameter of rising factorial (a)_n
+a = Fraction(1, 3)
+TRAINING_NS = tuple(range(10, 201, 10))
 
-# (a)_n can overflow; work in log-domain and fall back to inf if needed
+
+def exact_log(n):
+    x = number(a)
+    return mp.loggamma(n+x) - mp.loggamma(x)
+
+
+def main_log(n):
+    x = number(a)
+    z = n+x
+    return (z-mp.mpf("0.5"))*mp.log(z) - z + mp.log(2*mp.pi)/2 - mp.loggamma(x)
+
+
+@lru_cache(maxsize=32)
+def center_model(order=5, dps=DEFAULT_DPS):
+    return fit_log_center(TRAINING_NS, exact_log, main_log, order, shift=a, dps=dps)
+
+
 def rising_exact(n):
-    return math.lgamma(a + n) - math.lgamma(a)  # return log value directly
+    """Return a high-precision logarithm of (a)_n."""
+    integer(n)
+    with mp.workdps(DEFAULT_DPS):
+        return exact_log(n)
+
 
 def mvdc_main_log(n):
-    factors = [a + k for k in range(n)]
-    _, ln_H = mvdc_generic_center(factors, order=2)
-    return ln_H
+    integer(n)
+    with mp.workdps(DEFAULT_DPS):
+        return mp.mpf(0) if n == 0 else main_log(n)
 
-# Fit polynomial coeffs for log-residual up to 5th order
 
 def fit_coeffs(order=5, start=10, stop=200, step=10):
-    rows, y = [], []
-    for n in range(start, stop + 1, step):
-        log_exact = math.lgamma(a + n) - math.lgamma(a)
-        _, ln_H = mvdc_generic_center([a + k for k in range(n)], order=2)
-        log_r = log_exact - ln_H
-        rows.append([1.0] + [1.0 / n**k for k in range(1, order + 1)])
-        y.append(log_r)
-    m = order + 1
-    xtx = [[0.0]*m for _ in range(m)]
-    xty = [0.0]*m
-    for row, yi in zip(rows, y):
-        for i in range(m):
-            xty[i] += row[i]*yi
-            for j in range(m):
-                xtx[i][j] += row[i]*row[j]
-    # augment and Gaussian eliminate
-    for i in range(m):
-        xtx[i].append(xty[i])
-    for i in range(m):
-        piv = xtx[i][i]
-        for j in range(i, m+1):
-            xtx[i][j] /= piv
-        for k in range(m):
-            if k==i: continue
-            fac=xtx[k][i]
-            for j in range(i, m+1):
-                xtx[k][j]-=fac*xtx[i][j]
-    return [xtx[i][m] for i in range(m)]
-
-COEFFS = fit_coeffs()
+    integer(step, "step", 1)
+    model = fit_log_center(range(start, stop+1, step), exact_log, main_log, order, shift=a)
+    return model.layers[0].inverse_coefficients()
 
 
-def mvdc_cascade_log(n):
-    factors=[a+k for k in range(n)]
-    _, ln_H = mvdc_generic_center(factors, order=2)
-    log_corr = sum(COEFFS[k]/n**k for k in range(len(COEFFS)))
-    return ln_H + log_corr
+def mvdc_cascade_log(n, order=5, dps=DEFAULT_DPS):
+    """Return the complete fitted log value, including the fitted intercept."""
+    integer(n)
+    order_value(order)
+    with mp.workdps(precision(dps)):
+        if n == 0:
+            return mp.mpf(0)
+        return center_model(order, dps).log_value(n)
 
 
-def compare(ns):
-    print("MVDC approximation of the rising factorial (a)_n with a = 1/3. Values are base-10 logs.")
-    print(f"{'n':>4} | {'log10 Exact':>15} | {'log10 H':>15} | {'H+3':>15} | {'H+5':>15} | ΔH+5")
-    for n in ns:
-        log_exact = rising_exact(n)
-        log_H = mvdc_main_log(n)
-        # polynomial corrections
-        log_corr3 = sum(COEFFS[k]/n**k for k in range(1, 4))  # k=1..3
-        log_corr5 = sum(COEFFS[k]/n**k for k in range(1, 6))  # k=1..5
-        log_H3 = log_H + log_corr3
-        log_H5 = log_H + log_corr5
-        dlog10 = (log_H5 - log_exact)/math.log(10)
-        print(f"{n:4d} | {log_exact/math.log(10):15.6f} | {log_H/math.log(10):15.6f} | {log_H3/math.log(10):15.6f} | {log_H5/math.log(10):15.6f} | {dlog10:.1e}")
+def compare(values):
+    with mp.workdps(DEFAULT_DPS):
+        print("Rising factorial (1/3)_n: relative errors of independently fitted orders 3 and 5")
+        for n in values:
+            reference = mp.rf(number(a), n)
+            errors = [relative_error(mp.exp(mvdc_cascade_log(n, order)), reference) for order in (3, 5)]
+            print(f"{n:5d} {mp.nstr(errors[0], 12):>18} {mp.nstr(errors[1], 12):>18}")
 
-if __name__=='__main__':
-    compare([1,2,5,10,20,50,100,200]) 
+
+if __name__ == "__main__":
+    compare((1, 2, 5, 10, 15, 25, 75, 125, 200, 500))
