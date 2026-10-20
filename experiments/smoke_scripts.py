@@ -12,8 +12,8 @@ COMMANDS = (
     ("experiments/mvdc_euler_product.py",), ("experiments/mvdc_dirichlet_tail.py",),
     ("experiments/gamma_mvdc_attempt.py",), ("experiments/mvdc_d_finiteness_test.py",),
     ("experiments/test_mvdc_range.py",),
-    ("pi_mvdc_gui.py", "--x", "10000", "--cutoff", "1000", "--verify"),
-    ("experiments/pi_mvdc_gui.py", "--x", "10000", "--cutoff", "1000", "--verify"),
+    ("pi_mvdc_gui.py", "--x", "10000", "--order", "12", "--verify"),
+    ("experiments/pi_mvdc_gui.py", "--x", "10000", "--order", "12", "--verify"),
 )
 
 

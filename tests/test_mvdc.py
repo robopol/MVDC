@@ -22,7 +22,7 @@ import faktorial
 import rising_mvdc_example as rising
 import qpoch_mvdc_example as qpoch
 import mobius_mvdc_example as mobius
-import mvdc_prime_count as primes
+from experiments import reference_pi_models as primes
 from experiments import mvdc_euler_product as euler
 from experiments import mvdc_dirichlet_tail as dirichlet
 from experiments import gamma_mvdc_attempt as euler_constant
@@ -257,7 +257,7 @@ class TailAndExperimentTests(NumericCase):
         self.assertEqual(recurrence.c_coefficient(5, 2), Fraction(5*(25-1), 24))
 
 
-class PrimeBackendTests(NumericCase):
+class ReferencePrimeBackendTests(NumericCase):
     def test_small_exact_counts_and_power_boundaries(self):
         for x, expected in ((2, 1), (10, 4), (100, 25), (1000, 168)):
             result = primes.approximate_pi_auto(x, return_details=True)

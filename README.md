@@ -100,24 +100,133 @@ entry points delegate to the corrected implementations in `experiments/`.
 - The D-finiteness script proves an exact recurrence for each fixed finite
   centred-index set. It makes no inference about an infinite prime sequence.
 
-## Prime-counting research utility
+## Fast prime-count approximation: classical model, MVDC evaluator
+
+The model and numerical evaluator are explicitly separated. The model is a
+classical **finite Riemann-type approximation**, anchored by a bounded known
+prefix. MVDC supplies a **centred numerical expansion of the smooth tail**.
+The output is not an exact prime count and is not evidence that MVDC itself
+predicts the unknown distribution of primes.
+
+### Consistent tail and conversion
+
+Write `theta(t)=sum_{p<=t} log(p)` and
+`Theta_K(t)=sum_{k=1}^K mu(k)*t**(1/k)`. The latter is a smooth model suggested
+by the classical Mobius relation between theta and Chebyshev psi, with the
+leading approximation psi(t) ~ t. The omitted prime-distribution fluctuations
+remain model error. Correct conversion uses `1/log(t)` inside a Stieltjes
+integral; it does not divide the entire weighted sum by a guessed scalar:
+
+\[
+\pi(x)-\pi(M)=\int_{(M,x]}\frac{d\theta(t)}{\log t}.
+\]
+
+Substituting the smooth model and using u=log(t) gives
+
+\[
+\widehat\pi_K(x;M)=\pi(M)+
+\sum_{k=1}^K\frac{\mu(k)}k
+\int_{\log M}^{\log x}\frac{e^{u/k}}u\,du.
+\]
+
+This is identically the finite classical expression
+
+\[
+\pi(M)+\sum_{k=1}^K\frac{\mu(k)}k
+\left[\operatorname{li}(x^{1/k})-\operatorname{li}(M^{1/k})\right].
+\]
+
+This equivalence is stated rather than hidden. The production estimator uses
+the centred numerical expansion below; a separate 70-digit li evaluation
+checks that numerical implementation. Neither finite K nor the numerical
+error bound certifies accuracy against the true pi(x). The finite smooth
+model is also not identical to an infinite Riemann-R evaluation.
+
+The old Bernoulli denominator is removed: the correct local divisor is u in
+the integral, where u>=log(2)>0. The old mixture of a prime-power weighted
+block with a differently weighted root tail is not retained.
+
+### What the MVDC calculation actually does
+
+The finite C-Bernoulli identity in the paper expands equally spaced sums
+about their midpoint. For a midpoint grid in [c-h,c+h], its Riemann-sum limit
+has coefficients
+
+\[
+\int_{c-h}^{c+h}g(u)\,du=
+\sum_{j\ge0}\frac{2h^{2j+1}}{(2j+1)!}g^{(2j)}(c).
+\]
+
+Indeed, `(2h/n)^(r+1)*C_r(n)` tends to `2*h^(r+1)/(r+1)!` for even r;
+odd moments vanish. This is the continuous centred-moment form of the MVDC
+apparatus, mathematically a Taylor quadrature. It is not claimed as a new
+prime-density law or as the discrete C coefficient itself.
+
+For `g_k(u)=exp(u/k)/u`, let u=c(1+v), A=c/k and rho=h/c. The coefficients of
+`exp(A*v)/(1+v)` satisfy `q_0=1`, `q_r=A^r/r!-q_(r-1)`. A degree-2p panel is
+
+\[
+\frac{2h e^{c/k}}c\sum_{j=0}^p\frac{q_{2j}\rho^{2j}}{2j+1}.
+\]
+
+Panels satisfy h/c<=1/8 and h<=1/2. Cauchy's coefficient bound on a circle of
+radius R_s around c, with h<R_s<c, gives a panel truncation bound
+
+\[
+\frac{2h e^{(c+R_s)/k}}{c-R_s}
+\frac{(h/R_s)^{2p+2}}{(2p+3)(1-(h/R_s)^2)}.
+\]
+
+The implementation uses `R_s=min(3c/4,k*(2p+2))` and sums absolute panel bounds
+with weights abs(mu(k))/k. This bounds numerical Taylor truncation in exact
+arithmetic only. Roundoff and the model's discrepancy from pi(x) are separate.
+Close endpoints use log1p and a log-span coordinate to avoid cancellation.
+
+### Work budget and verification
+
+Defaults, fixed before comparison: alpha=0.9, M=min(floor(x^alpha),10000),
+K=floor(2*log2(x)), and numerical degree 12 (seven even terms per panel).
+The boundary x=2 has M=x and is explicitly labelled exact-prefix-only.
+Every default input x>2 has M<x. No exact-target fallback, long Mobius table,
+zeta-zero sum or fitting to the target count is used. The short Mobius weights
+are classical and are not attributed to MVDC. Explicit prefix overrides are
+reported, including the case M=x.
 
 ```sh
-python -X utf8 -B pi_mvdc_gui.py
-python -X utf8 -B pi_mvdc_gui.py --x 100000 --cutoff 10000 --verify
-python -X utf8 -B experiments/test_mvdc_range.py
+python -X utf8 -B pi_mvdc_gui.py --x 10000 --order 12 --verify
+python -X utf8 -B pi_mvdc_gui.py --x 1000000000000 --order 12
+python -X utf8 -B experiments/compare_pi_mvdc.py --output-json reports/pi-mvdc-fast-tail-2026-10-19.json
 ```
 
-Importing the GUI never opens a window. The former Bernoulli-denominator
-conversion and artificial log-moment correction had no established prime-count
-error bound. They have been replaced in this utility by an explicit exact-front
-plus Riemann-R (or logarithmic-integral) tail model. This is a declared reference
-model, not a claimed new MVDC theorem. The effort target selects a bounded exact
-cutoff; it does not guarantee a relative error for the modelled tail.
+`--max-cutoff` controls exact prefix work; `--cutoff` sets it explicitly.
+`--numerical-tolerance` adapts only the evaluation order, not the error against
+pi(x). The obsolete beta and scalar-denominator controls were removed.
 
-The built-in exact sieve is capped at five million. The GUI and CLI reject
-inputs outside the documented range, and an exact-reference comparison is
-optional. `experiments/pi_mvdc_gui.py` delegates to the same backend and GUI.
+The report separates three quantities: total error against exact pi(x),
+classical-model error from a 70-digit evaluation, and the MVDC numerical
+evaluation error. It includes a fixed order-convergence grid, fixed prefix
+budgets, cold-call timings, and source hashes. Local exact counts through
+10^7 come from an independent sieve after predictions are fixed. Larger
+reference values are published exact counts, not values computed by MVDC.
+Exact-prefix-only cases are excluded from approximation-success summaries.
+No runtime superiority over optimized prime-counting libraries is claimed.
+
+Sources:
+
+- [NIST: Chebyshev psi](https://dlmf.nist.gov/25.16#E1)
+- [NIST: Mobius inversion](https://dlmf.nist.gov/27.5)
+- [Finite Riemann-type model notation](https://arxiv.org/abs/1410.1083)
+- [Published exact prime-count references](https://t5k.org/howmany.html)
+
+### Comparison baseline
+
+The comparison script includes the previous factor-block approximation in
+`experiments/archive/pi_mvdc_factor_block_20261019.py`. Its original tail
+and denominator remain unproved model choices; it is a comparison baseline
+and never computes the active approximation.
+
+The excluded long-Mobius exact-count experiment is not part of this published
+implementation and must not be cited as accuracy achieved by this approximation.
 
 ## Verification and reproducible data
 
